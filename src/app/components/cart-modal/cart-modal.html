@@ -1,0 +1,114 @@
+<!-- Cart Modal -->
+<div class="modal fade" [class.show]="isOpen" [style.display]="isOpen ? 'block' : 'none'" tabindex="-1" *ngIf="isOpen">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-shopping-cart me-2"></i>
+          Shopping Cart ({{ cartItems.length }} items)
+        </h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <!-- Empty Cart -->
+        <div *ngIf="cartItems.length === 0" class="text-center py-5">
+          <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+          <h5>Your cart is empty</h5>
+          <p class="text-muted">Add some products to get started!</p>
+          <button class="btn btn-primary" (click)="closeModal()">Continue Shopping</button>
+        </div>
+
+        <!-- Cart Items -->
+        <div *ngIf="cartItems.length > 0">
+          <div class="cart-item" *ngFor="let item of cartItems">
+            <div class="row align-items-center">
+              <!-- Product Image -->
+              <div class="col-md-2">
+                <img [src]="item.product.imageCover" [alt]="item.product.title" class="item-image">
+              </div>
+
+              <!-- Product Details -->
+              <div class="col-md-4">
+                <h6 class="item-title">{{ item.product.title }}</h6>
+                <p class="item-price">{{ formatPrice(item.product.price) }}</p>
+              </div>
+
+              <!-- Quantity Controls -->
+              <div class="col-md-3">
+                <div class="quantity-controls">
+                  <button class="quantity-btn" (click)="updateItemQuantity(item.product._id, item.quantity - 1)">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <input 
+                    type="number" 
+                    class="quantity-input" 
+                    [value]="item.quantity"
+                    (change)="updateItemQuantity(item.product._id, +$event.target.value)"
+                    min="1">
+                  <button class="quantity-btn" (click)="updateItemQuantity(item.product._id, item.quantity + 1)">
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Total Price -->
+              <div class="col-md-2">
+                <span class="item-total">{{ formatPrice(item.totalPrice) }}</span>
+              </div>
+
+              <!-- Remove Button -->
+              <div class="col-md-1">
+                <button class="btn btn-sm btn-outline-danger" (click)="removeCartItem(item.product._id)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer" *ngIf="cartItems.length > 0">
+        <div class="w-100">
+          <!-- Cart Summary -->
+          <div class="cart-summary mb-3">
+            <div class="d-flex justify-content-between">
+              <span>Subtotal:</span>
+              <span>{{ formatPrice(cartTotal) }}</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span>Shipping:</span>
+              <span>{{ formatPrice(calculateShipping()) }}</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span>Tax:</span>
+              <span>{{ formatPrice(calculateTax()) }}</span>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between fw-bold">
+              <span>Total:</span>
+              <span>{{ formatPrice(getFinalTotal()) }}</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button class="btn btn-outline-secondary" (click)="closeModal()">
+              Continue Shopping
+            </button>
+            <button class="btn btn-primary" (click)="proceedToCheckout()">
+              <i class="fas fa-credit-card me-2"></i>
+              Proceed to Checkout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Backdrop -->
+<div class="modal-backdrop fade show" *ngIf="isOpen"></div>

@@ -1,0 +1,23 @@
+<div class="card brand-card h-100" (click)="selectBrand()">
+  <div class="card-body text-center">
+    <!-- Brand Logo -->
+    <div class="brand-logo mb-3">
+      <img 
+        [src]="brand.image" 
+        [alt]="brand.name"
+        class="brand-image"
+        (error)="onImageError($event)">
+    </div>
+
+    <!-- Brand Name -->
+    <h6 class="card-title brand-name">{{ brand.name }}</h6>
+
+    <!-- Brand Action -->
+    <div class="brand-action">
+      <button class="btn btn-outline-primary btn-sm">
+        <i class="fas fa-arrow-right me-1"></i>
+        View Products
+      </button>
+    </div>
+  </div>
+</div>

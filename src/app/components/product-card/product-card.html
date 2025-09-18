@@ -1,0 +1,94 @@
+<div class="card product-card h-100">
+  <!-- Product Image -->
+  <div class="product-image-container">
+    <img 
+      [src]="product.imageCover" 
+      [alt]="product.title"
+      class="card-img-top product-image"
+      (error)="onImageError($event)">
+    
+    <!-- Wishlist Button -->
+    <button 
+      class="wishlist-btn position-absolute top-0 end-0 m-2"
+      [class.active]="isInWishlist"
+      (click)="toggleWishlistClick()"
+      [title]="isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'">
+      <i class="fas fa-heart"></i>
+    </button>
+
+    <!-- Product Badge -->
+    <div class="product-badge position-absolute top-0 start-0 m-2" *ngIf="product.ratingsAverage >= 4.5">
+      <span class="badge bg-success">Best Seller</span>
+    </div>
+  </div>
+
+  <!-- Product Info -->
+  <div class="card-body d-flex flex-column">
+    <!-- Product Title -->
+    <h5 class="card-title product-title">
+      {{ product.title }}
+    </h5>
+
+    <!-- Product Description -->
+    <p class="card-text product-description" *ngIf="product.description">
+      {{ product.description | slice:0:100 }}{{ product.description.length > 100 ? '...' : '' }}
+    </p>
+
+    <!-- Product Rating -->
+    <div class="product-rating mb-2" *ngIf="product.ratingsQuantity > 0">
+      <div class="d-flex align-items-center">
+        <div class="rating-stars me-2">
+          <i 
+            *ngFor="let star of getRatingStars(product.ratingsAverage)" 
+            [class]="star"
+            [class.text-warning]="star.includes('fa-star') && !star.includes('far')">
+          </i>
+        </div>
+        <small class="text-muted">
+          ({{ product.ratingsQuantity }})
+        </small>
+      </div>
+    </div>
+
+    <!-- Product Price -->
+    <div class="product-price mb-3">
+      <span class="price-current">{{ formatPrice(product.price) }}</span>
+      <span class="price-original ms-2" *ngIf="product.price < 100">
+        {{ formatPrice(product.price * 1.2) }}
+      </span>
+    </div>
+
+    <!-- Product Actions -->
+    <div class="product-actions mt-auto">
+      <div class="d-grid gap-2">
+        <button 
+          class="btn btn-primary add-to-cart-btn"
+          (click)="addToCartClick()"
+          [disabled]="product.quantity === 0">
+          <i class="fas fa-shopping-cart me-2"></i>
+          {{ product.quantity > 0 ? 'Add to Cart' : 'Out of Stock' }}
+        </button>
+        
+        <button 
+          class="btn btn-outline-secondary btn-sm"
+          (click)="viewDetails()">
+          <i class="fas fa-eye me-2"></i>
+          View Details
+        </button>
+      </div>
+    </div>
+
+    <!-- Product Meta -->
+    <div class="product-meta mt-2">
+      <small class="text-muted">
+        <i class="fas fa-tag me-1"></i>
+        {{ product.category.name }}
+      </small>
+      <br>
+      <small class="text-muted">
+        <i class="fas fa-industry me-1"></i>
+        {{ product.brand.name }}
+      </small>
+    </div>
+  </div>
+</div>

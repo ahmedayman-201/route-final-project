@@ -1,0 +1,24 @@
+<div class="card category-card h-100" (click)="selectCategory()">
+  <div class="card-body text-center">
+    <!-- Category Icon -->
+    <div class="category-icon mb-3">
+      <i [class]="getCategoryIcon(category.name)"></i>
+    </div>
+
+    <!-- Category Name -->
+    <h5 class="card-title category-name">{{ category.name }}</h5>
+
+    <!-- Category Description -->
+    <p class="card-text category-description">
+      Explore our {{ category.name.toLowerCase() }} collection
+    </p>
+
+    <!-- Category Action -->
+    <div class="category-action">
+      <button class="btn btn-outline-primary btn-sm">
+        <i class="fas fa-arrow-right me-1"></i>
+        Shop Now
+      </button>
+    </div>
+  </div>
+</div>

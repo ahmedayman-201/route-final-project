@@ -1,0 +1,169 @@
+<!-- Payment Modal -->
+<div class="modal fade" [class.show]="isOpen" [style.display]="isOpen ? 'block' : 'none'" tabindex="-1" *ngIf="isOpen">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-credit-card me-2"></i>
+          Payment Information
+        </h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <!-- Order Summary -->
+        <div class="order-summary mb-4">
+          <h6>Order Summary</h6>
+          <div class="d-flex justify-content-between">
+            <span>Total Amount:</span>
+            <span class="fw-bold">{{ formatPrice(totalAmount) }}</span>
+          </div>
+        </div>
+
+        <!-- Payment Form -->
+        <form (ngSubmit)="processPayment()" #paymentForm="ngForm">
+          <!-- Card Number -->
+          <div class="mb-3">
+            <label for="cardNumber" class="form-label">Card Number</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              id="cardNumber"
+              name="cardNumber"
+              [(ngModel)]="paymentData.cardNumber"
+              placeholder="1234 5678 9012 3456"
+              required
+              maxlength="19"
+              (input)="formatCardNumber($event)">
+            <div class="form-text">Enter your 16-digit card number</div>
+          </div>
+
+          <!-- Expiry Date and CVV -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="expiryDate" class="form-label">Expiry Date</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="expiryDate"
+                name="expiryDate"
+                [(ngModel)]="paymentData.expiryDate"
+                placeholder="MM/YY"
+                required
+                maxlength="5"
+                (input)="formatExpiryDate($event)">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="cvv" class="form-label">CVV</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="cvv"
+                name="cvv"
+                [(ngModel)]="paymentData.cvv"
+                placeholder="123"
+                required
+                maxlength="4"
+                (input)="formatCVV($event)">
+            </div>
+          </div>
+
+          <!-- Cardholder Name -->
+          <div class="mb-3">
+            <label for="cardholderName" class="form-label">Cardholder Name</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              id="cardholderName"
+              name="cardholderName"
+              [(ngModel)]="paymentData.cardholderName"
+              placeholder="John Doe"
+              required>
+          </div>
+
+          <!-- Billing Address -->
+          <div class="mb-3">
+            <label for="billingAddress" class="form-label">Billing Address</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              id="billingAddress"
+              name="billingAddress"
+              [(ngModel)]="paymentData.billingAddress"
+              placeholder="123 Main St, City, State"
+              required>
+          </div>
+
+          <!-- Payment Method Selection -->
+          <div class="mb-3">
+            <label class="form-label">Payment Method</label>
+            <div class="form-check">
+              <input 
+                class="form-check-input" 
+                type="radio" 
+                name="paymentMethod" 
+                id="creditCard"
+                value="card"
+                [(ngModel)]="paymentData.paymentMethod"
+                checked>
+              <label class="form-check-label" for="creditCard">
+                <i class="fas fa-credit-card me-2"></i>
+                Credit/Debit Card
+              </label>
+            </div>
+            <div class="form-check">
+              <input 
+                class="form-check-input" 
+                type="radio" 
+                name="paymentMethod" 
+                id="cashOnDelivery"
+                value="cash"
+                [(ngModel)]="paymentData.paymentMethod">
+              <label class="form-check-label" for="cashOnDelivery">
+                <i class="fas fa-money-bill-wave me-2"></i>
+                Cash on Delivery
+              </label>
+            </div>
+          </div>
+
+          <!-- Terms and Conditions -->
+          <div class="mb-3 form-check">
+            <input 
+              type="checkbox" 
+              class="form-check-input" 
+              id="agreeTerms"
+              [(ngModel)]="paymentData.agreeTerms"
+              required>
+            <label class="form-check-label" for="agreeTerms">
+              I agree to the <a href="#" (click)="$event.preventDefault()">Terms and Conditions</a>
+            </label>
+          </div>
+        </form>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <div class="w-100">
+          <div class="d-flex justify-content-between align-items-center">
+            <button class="btn btn-outline-secondary" (click)="closeModal()">
+              Cancel
+            </button>
+            <button 
+              class="btn btn-primary btn-lg"
+              (click)="processPayment()"
+              [disabled]="paymentForm.invalid || isLoading">
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+              <i class="fas fa-lock me-2"></i>
+              Pay {{ formatPrice(totalAmount) }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Backdrop -->
+<div class="modal-backdrop fade show" *ngIf="isOpen"></div>

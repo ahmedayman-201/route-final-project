@@ -1,0 +1,149 @@
+<!-- Header Component -->
+<app-header
+  (openAuthModal)="openAuthModal()"
+  (openCartModal)="openCartModal()"
+  (openWishlistModal)="openWishlistModal()"
+  (searchProducts)="onSearch($event)"
+  [cartCount]="cartService.getCartCount()"
+  [wishlistCount]="wishlistService.getWishlistCount()"
+  [isLoggedIn]="authService.isLoggedIn()"
+  [user]="authService.getCurrentUser()">
+</app-header>
+
+<!-- Main Content -->
+<main class="main-content">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="row justify-content-center text-center">
+        <div class="col-lg-8">
+          <h1 class="hero-title">Welcome to Cloud Store</h1>
+          <p class="hero-subtitle">Discover amazing products at unbeatable prices</p>
+          <button class="cta-button" (click)="scrollToProducts()">Shop Now</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="container mb-5" id="categories">
+    <h2 class="section-title">Shop by Category</h2>
+    <div class="row">
+      <div class="col-lg-3 col-md-4 col-sm-6 mb-4" *ngFor="let category of categories">
+        <app-category-card
+          [category]="category"
+          (categorySelected)="filterByCategory($event)">
+        </app-category-card>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brands Section -->
+  <section class="container mb-5" id="brands">
+    <h2 class="section-title">Our Brands</h2>
+    <div class="row">
+      <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4" *ngFor="let brand of brands">
+        <app-brand-card
+          [brand]="brand"
+          (brandSelected)="filterByBrand($event)">
+        </app-brand-card>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Section -->
+  <section class="container mb-5" id="products">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="section-title mb-0">Featured Products</h2>
+      <div class="d-flex gap-2">
+        <button
+          class="btn btn-outline-primary"
+          (click)="sortProducts('price-asc')"
+          [class.active]="currentSort === 'price-asc'">
+          Price: Low to High
+        </button>
+        <button
+          class="btn btn-outline-primary"
+          (click)="sortProducts('price-desc')"
+          [class.active]="currentSort === 'price-desc'">
+          Price: High to Low
+        </button>
+        <button
+          class="btn btn-outline-primary"
+          (click)="sortProducts('name')"
+          [class.active]="currentSort === 'name'">
+          Name A-Z
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-spinner">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="row" *ngIf="!isLoading">
+      <div class="col-lg-3 col-md-4 col-sm-6 mb-4"
+           *ngFor="let product of filteredProducts">
+        <app-product-card
+          [product]="product"
+          [isInWishlist]="wishlistService.isInWishlist(product._id)"
+          (addToCart)="addToCart($event)"
+          (toggleWishlist)="toggleWishlist($event)">
+        </app-product-card>
+      </div>
+    </div>
+
+    <!-- No Products Message -->
+    <div *ngIf="!isLoading && filteredProducts.length === 0" class="text-center py-5">
+      <h3>No products found</h3>
+      <p>Try adjusting your search or filters</p>
+      <button class="btn btn-primary" (click)="clearFilters()">Clear Filters</button>
+    </div>
+  </section>
+</main>
+
+<!-- Footer Component -->
+<app-footer></app-footer>
+
+<!-- Auth Modal -->
+<app-auth-modal
+  [isOpen]="showAuthModal"
+  (close)="closeAuthModal()"
+  (loginSuccess)="onLoginSuccess($event)"
+  (registerSuccess)="onRegisterSuccess($event)">
+</app-auth-modal>
+
+<!-- Cart Modal -->
+<app-cart-modal
+  [isOpen]="showCartModal"
+  [cartItems]="cartService.getCartItems()"
+  [cartTotal]="cartService.getCartTotal()"
+  (close)="closeCartModal()"
+  (updateQuantity)="updateCartQuantity($event)"
+  (removeItem)="removeFromCart($event)"
+  (checkout)="proceedToCheckout()">
+</app-cart-modal>
+
+<!-- Wishlist Modal -->
+<app-wishlist-modal
+  [isOpen]="showWishlistModal"
+  [wishlistItems]="wishlistService.getWishlistItems()"
+  (close)="closeWishlistModal()"
+  (addToCart)="addToCart($event)"
+  (removeFromWishlist)="removeFromWishlist($event)">
+</app-wishlist-modal>
+
+<!-- Payment Modal -->
+<app-payment-modal
+  [isOpen]="showPaymentModal"
+  [totalAmount]="cartService.getCartTotal()"
+  (close)="closePaymentModal()"
+  (paymentSuccess)="onPaymentSuccess($event)">
+</app-payment-modal>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toast-container"></div>
